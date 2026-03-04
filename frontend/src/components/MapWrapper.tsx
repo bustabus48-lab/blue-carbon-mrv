@@ -12,6 +12,7 @@ interface MapWrapperProps {
     alerts?: any[];
     leakageZones?: any[];
     samplePlots?: any[];
+    projectAreas?: any[];
 }
 
 export default function MapWrapper(props: MapWrapperProps) {

@@ -1,6 +1,6 @@
 import uuid
 from sqlalchemy import Column, String, Numeric, Date, Boolean, DateTime, text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from geoalchemy2 import Geometry
 from .base import Base
 
@@ -46,5 +46,20 @@ class SARChangeAlert(Base):
     event_date = Column(Date, nullable=False)
     geom = Column(Geometry('POLYGON', srid=4326), nullable=False)
     assigned_crema_id = Column(UUID(as_uuid=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=text("timezone('utc'::text, now())"), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=text("timezone('utc'::text, now())"), nullable=False)
+
+
+class ProjectArea(Base):
+    __tablename__ = "project_areas"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()"))
+    area_name = Column(String, nullable=False)
+    area_type = Column(String(50), nullable=False)
+    source_file_name = Column(String, nullable=True)
+    area_ha = Column(Numeric(12, 2), nullable=True)
+    properties = Column(JSONB, nullable=False, server_default=text("'{}'::jsonb"))
+    geom = Column(Geometry('MULTIPOLYGON', srid=4326), nullable=False)
+    uploaded_by = Column(UUID(as_uuid=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=text("timezone('utc'::text, now())"), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=text("timezone('utc'::text, now())"), nullable=False)

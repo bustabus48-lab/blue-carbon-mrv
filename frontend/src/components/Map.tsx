@@ -17,9 +17,18 @@ interface MapProps {
     alerts?: any[];
     leakageZones?: any[];
     samplePlots?: any[];
+    projectAreas?: any[];
 }
 
-export default function Map({ plots = [], alerts = [], leakageZones = [], samplePlots = [] }: MapProps) {
+const projectAreaStyleByType: Record<string, { color: string; fillOpacity: number }> = {
+    restoration: { color: '#22c55e', fillOpacity: 0.12 },
+    conservation: { color: '#3b82f6', fillOpacity: 0.12 },
+    protection: { color: '#f97316', fillOpacity: 0.12 },
+    buffer: { color: '#a855f7', fillOpacity: 0.1 },
+    reference: { color: '#14b8a6', fillOpacity: 0.1 },
+};
+
+export default function Map({ plots = [], alerts = [], leakageZones = [], samplePlots = [], projectAreas = [] }: MapProps) {
     const ghanaCenter: [number, number] = [5.6, -0.2];
 
     return (
@@ -107,6 +116,27 @@ export default function Map({ plots = [], alerts = [], leakageZones = [], sample
                     </Tooltip>
                 </GeoJSON>
             ))}
+
+            {projectAreas.map((area) => {
+                const areaType = area.area_type || 'reference';
+                const style = projectAreaStyleByType[areaType] || projectAreaStyleByType.reference;
+
+                return (
+                    <GeoJSON
+                        key={area.id}
+                        data={area.geojson}
+                        pathOptions={{ color: style.color, weight: 2, fillOpacity: style.fillOpacity }}
+                    >
+                        <Tooltip sticky>
+                            <div className="text-sm p-1">
+                                <strong className="text-slate-800">{area.area_name}</strong><br />
+                                <span className="text-slate-600">Type: {areaType}</span><br />
+                                <span className="text-slate-600">Area: {area.area_ha ?? 'N/A'} ha</span>
+                            </div>
+                        </Tooltip>
+                    </GeoJSON>
+                );
+            })}
         </MapContainer>
     );
 }
