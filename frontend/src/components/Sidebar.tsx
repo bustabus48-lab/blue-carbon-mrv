@@ -2,16 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, AlertCircle, Database, Settings, Map as MapIcon, Leaf, LogOut } from "lucide-react";
+import { LayoutDashboard, AlertCircle, Database, Settings, Map as MapIcon, Leaf, LogOut, TreePine, Users, Microscope, Calculator, ShieldAlert, HeartHandshake, ShieldCheck, DownloadCloud } from "lucide-react";
 
-export function Sidebar() {
+export function Sidebar({ userRole = 'crema_agent' }: { userRole?: string }) {
     const pathname = usePathname();
 
     const navItems = [
         { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-        { name: "Map View", href: "/map", icon: MapIcon },
         { name: "Alerts", href: "/alerts", icon: AlertCircle },
+        { name: "Plots", href: "/plots", icon: TreePine },
+        { name: "Soil Lab", href: "/soil", icon: Microscope },
+        { name: "Carbon Accounting", href: "/accounting", icon: Calculator },
+        { name: "Leakage & Buffer", href: "/leakage", icon: ShieldAlert },
+        { name: "Safeguards", href: "/safeguards", icon: HeartHandshake },
+        { name: "Compliance", href: "/compliance", icon: ShieldCheck },
+        { name: "Registry & Exports", href: "/registry", icon: DownloadCloud },
         { name: "Database", href: "/database", icon: Database },
+        ...(userRole === 'admin' ? [{ name: "Users", href: "/users", icon: Users }] : []),
         { name: "Settings", href: "/settings", icon: Settings },
     ];
 
@@ -30,8 +37,8 @@ export function Sidebar() {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive
-                                    ? "bg-emerald-500/10 text-emerald-400"
-                                    : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/50"
+                                ? "bg-emerald-500/10 text-emerald-400"
+                                : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/50"
                                 }`}
                         >
                             <item.icon className={`w-5 h-5 ${isActive ? "text-emerald-400" : "text-slate-500"}`} />
@@ -42,10 +49,10 @@ export function Sidebar() {
             </div>
 
             <div className="p-4 border-t border-slate-800">
-                <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
-                    <LogOut className="w-5 h-5 text-slate-500 group-hover:text-rose-400" />
+                <a href="/api/auth/logout" className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer block">
+                    <LogOut className="w-5 h-5 text-slate-500 group-hover:text-rose-400 shrink-0 inline-block mr-1" />
                     Sign out
-                </button>
+                </a>
             </div>
         </div>
     );

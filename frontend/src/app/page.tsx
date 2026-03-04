@@ -23,12 +23,6 @@ export default function Home() {
         >
           Enter Dashboard
         </Link>
-        <Link
-          href="/auth/login"
-          className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-400 disabled:pointer-events-none disabled:opacity-50 border border-slate-700 bg-transparent text-slate-200 hover:bg-slate-800 h-12 px-8 py-3 text-lg"
-        >
-          Partner Login
-        </Link>
       </div>
     </div>
   );

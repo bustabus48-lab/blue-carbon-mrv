@@ -11,9 +11,10 @@ export default async function DashboardPage() {
     const totalArea = plots?.reduce((sum, plot) => sum + Number(plot.area_ha), 0) || 0;
 
     // 2. Fetch alerts to calculate Active Alerts and Verification Rate
-    const { data: alerts } = await supabase.from("sar_change_alerts").select("status");
-    const totalAlerts = alerts?.length || 0;
-    const activeAlerts = alerts?.filter(a => a.status !== 'Verified' && a.status !== 'False Positive').length || 0;
+    const { data: alerts, error: alertsError } = await supabase.from("sar_change_alerts").select("status");
+    const safeAlerts = alerts || [];
+    const totalAlerts = safeAlerts.length;
+    const activeAlerts = safeAlerts.filter(a => a.status !== 'Verified' && a.status !== 'False Positive').length;
     const verifiedAlerts = totalAlerts - activeAlerts;
     const verificationRate = totalAlerts > 0 ? Math.round((verifiedAlerts / totalAlerts) * 100) : 100;
 
@@ -27,6 +28,8 @@ export default async function DashboardPage() {
     // 4. Fetch GeoJSON for the Map View
     const { data: geoPlots } = await supabase.from('geojson_plots').select('*');
     const { data: geoAlerts } = await supabase.from('geojson_alerts').select('*').neq('status', 'Verified');
+    const { data: geoLeakage } = await supabase.from('geojson_leakage_zones').select('*');
+    const { data: geoSamplePlots } = await supabase.from('geojson_sample_plots').select('*');
 
     const stats = [
         { title: "Mangrove Extent (Ha)", value: totalArea.toLocaleString(undefined, { maximumFractionDigits: 1 }), change: "Live Sync", trend: "up", icon: TreePine },
@@ -66,7 +69,12 @@ export default async function DashboardPage() {
             {/* Main Content Area Placeholder */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl min-h-[400px] flex items-center justify-center relative overflow-hidden h-[500px]">
-                    <MapWrapper plots={geoPlots || []} alerts={geoAlerts || []} />
+                    <MapWrapper
+                        plots={geoPlots || []}
+                        alerts={geoAlerts || []}
+                        leakageZones={geoLeakage || []}
+                        samplePlots={geoSamplePlots || []}
+                    />
                 </div>
                 <div className="bg-slate-900 border border-slate-800 rounded-xl min-h-[400px] overflow-hidden flex flex-col">
                     <div className="p-4 border-b border-slate-800 flex items-center justify-between">

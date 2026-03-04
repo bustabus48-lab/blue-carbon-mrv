@@ -1,0 +1,765 @@
+REQUEST FOR PROPOSALS (RFP)
+Development of the National Blue Carbon MRV Digital Platform
+Republic of Ghana
+
+1. INTRODUCTION
+The Government of Ghana, through the Ministry of Environment, Science and Technology (MEST) and the Ministry of Lands and Natural Resources (MLNR), invites qualified firms to submit proposals for the design, development, deployment, and support of a National Blue Carbon Monitoring, Reporting, and Verification (MRV) Digital Platform.
+The system will operationalize Ghana’s National Blue Carbon MRV Framework and support:
+	•	National GHG inventory reporting
+	•	Article 6 participation
+	•	Voluntary carbon market programs
+	•	Ecosystem management decision-making
+	•	Safeguards monitoring
+	•	Near-real-time operational monitoring
+The platform will be an internal government tool with role-based access, including controlled access for CREMAs (Community Resource Management Areas).
+The system must align with:
+	•	IPCC Wetlands Supplement
+	•	High-integrity carbon accounting practices
+	•	Ghana’s national carbon trading registry (minimal duplication)
+	•	National data governance requirements
+
+2. OBJECTIVES
+The objectives of this assignment are to:
+	•	Develop a secure, scalable web-based MRV platform.
+	•	Operationalize the national Blue Carbon MRV architecture.
+	•	Enable near-real-time ecosystem monitoring.
+	•	Provide audit-ready traceability and compliance tracking.
+	•	Integrate with the National Carbon Trading Registry (minimal interface).
+	•	Ensure role-based governance and institutional separation.
+	•	Support high-integrity carbon accounting (≤10% uncertainty).
+	•	Enable annual and operational reporting.
+
+3. SCOPE OF WORK
+The contractor shall design, build, test, deploy, and support the following modules.
+
+4. SYSTEM MODULE REQUIREMENTS
+
+MODULE 1: User Management & Governance Layer
+Requirements
+	•	Role-based access control
+	•	Multi-tier permissions
+	•	Two-factor authentication
+	•	Full audit log (immutable)
+	•	Activity tracking
+	•	Role categories:
+	•	MRV Admin
+	•	Carbon Accounting
+	•	GIS Unit
+	•	Safeguards Unit
+	•	Soil Lab
+	•	CREMA User
+	•	Auditor (read-only)
+
+MODULE 2: Plot & Field Data Management
+Capabilities
+	•	Permanent Sample Plot registry
+	•	Biomass data entry
+	•	Re-measurement tracking
+	•	Photo uploads (geotagged)
+	•	QA re-measurement logging
+	•	Disturbance logging
+	•	Restoration monitoring forms
+Offline data capture integration required (ODK/Kobo preferred).
+
+MODULE 3: Soil & Laboratory Management
+Features
+	•	Sample ID generator
+	•	Chain-of-custody tracking
+	•	Lab result entry
+	•	Bulk density calculator
+	•	Soil carbon calculator
+	•	Duplicate tracking
+	•	QA flags
+	•	Outlier detection
+Must support:
+	•	≤10% uncertainty documentation
+
+MODULE 4: GIS & Remote Sensing Engine
+Capabilities
+	•	Annual classification upload
+	•	Confusion matrix storage
+	•	≥90% accuracy verification
+	•	Change detection visualization
+	•	Leakage belt overlay
+	•	Stratum mapping
+	•	Version control for classification runs
+Preferred integration with:
+	•	Google Earth Engine or equivalent
+
+MODULE 5: Near-Real-Time Operational Monitoring
+Capabilities
+	•	Sentinel-1 & Sentinel-2 ingestion
+	•	Change detection alerts
+	•	Vegetation stress detection
+	•	Restoration survival monitoring
+	•	Alert assignment workflow
+	•	CREMA verification interface
+	•	Alert dashboard
+	•	Operational reporting export
+
+MODULE 6: Carbon Accounting Engine
+Requirements
+	•	Store emission factors (Tier 1–3)
+	•	Integrate biomass & soil data
+	•	Uncertainty propagation logic
+	•	Carbon stock change calculation
+	•	Deduction calculator (leakage + buffer + conservative adjustment)
+	•	Generate issuance-ready summary report
+Initial phase may support export/import if full engine not yet integrated.
+
+MODULE 7: Leakage & Permanence Monitoring
+Features
+	•	Leakage belt mapping
+	•	Leakage detection logs
+	•	Market survey entry
+	•	Risk scoring module
+	•	Buffer pool management tracker
+	•	Reversal event tracking
+
+MODULE 8: Safeguards & Social Integrity
+Features
+	•	FPIC document repository
+	•	Governance composition tracking
+	•	Gender & youth compliance flags
+	•	Grievance management ticketing
+	•	Benefit-sharing reporting log
+	•	Safeguard risk index dashboard
+
+MODULE 9: Traceability & Compliance Engine
+Requirements
+	•	Requirement checklist per monitoring cycle
+	•	Evidence linking (document-to-requirement mapping)
+	•	Compliance status dashboard
+	•	Issuance lock if requirements incomplete
+	•	Exportable traceability matrix (Excel/PDF)
+
+MODULE 10: Registry Interface (Minimal)
+The system shall NOT replicate the national carbon registry.
+Instead, it must:
+	•	Generate Issuance Request Packs
+	•	Export CSV/JSON for registry ingestion
+	•	Track issuance status
+	•	Record corresponding adjustment (if applicable)
+	•	Maintain buffer ledger internally
+
+5. TECHNICAL REQUIREMENTS
+
+5.1 Architecture
+	•	Web-based application
+	•	Modular architecture
+	•	API-ready backend
+	•	Microservice architecture preferred for GIS and carbon engine
+	•	Scalable to national level
+
+5.2 Recommended Technology Stack
+Backend:
+	•	Python (Django / FastAPI) OR Node.js
+Database:
+	•	PostgreSQL + PostGIS
+Frontend:
+	•	React / Next.js
+Maps:
+	•	Leaflet / Mapbox
+Storage:
+	•	Secure object storage (S3 compatible)
+Authentication:
+	•	Government SSO integration preferred
+
+5.3 Security
+	•	End-to-end encryption
+	•	Role-based access
+	•	Audit logs immutable
+	•	Secure hosting (cloud or government data center)
+	•	Weekly backup
+	•	Disaster recovery plan
+	•	Penetration testing before launch
+
+6. DATA GOVERNANCE REQUIREMENTS
+	•	No overwriting of historical records
+	•	Full version control
+	•	Immutable audit trail
+	•	Metadata retention
+	•	Data export capability
+	•	Role-based data visibility
+
+7. PERFORMANCE REQUIREMENTS
+
+Operational Monitoring
+	•	Imagery ingestion delay ≤72 hours
+	•	Alert generation ≤24 hours after processing
+	•	Alert-to-verification ≤14 days
+	•	False positive rate ≤20%
+
+System
+	•	≥99% uptime
+	•	Scalable to 5,000+ plots
+	•	Handle 10+ years of imagery archive
+	•	Response time <3 seconds for dashboard queries
+
+8. DELIVERABLES
+The contractor shall deliver:
+	•	System architecture design document
+	•	Database schema documentation
+	•	User interface wireframes
+	•	Functional prototype
+	•	Beta version
+	•	Final deployed system
+	•	Technical documentation
+	•	User manuals
+	•	Administrator manuals
+	•	Training workshops (minimum 3)
+	•	Maintenance plan (minimum 12 months support)
+
+9. IMPLEMENTATION TIMELINE
+Expected duration: 12–18 months
+Phase 1 – Design (2 months)
+	•	Requirements validation
+	•	Architecture design
+	•	UX design
+Phase 2 – Core System Development (4–6 months)
+	•	User management
+	•	Plot & soil modules
+	•	GIS upload
+	•	Traceability engine
+Phase 3 – Operational Monitoring Module (4 months)
+	•	Satellite integration
+	•	Alert engine
+	•	CREMA interface
+Phase 4 – Carbon Accounting & Integration (3 months)
+	•	Carbon calculations
+	•	Registry interface
+	•	Reporting module
+Phase 5 – Testing & Deployment (2 months)
+	•	User acceptance testing
+	•	Security testing
+	•	Launch
+
+10. TRAINING REQUIREMENTS
+Contractor must provide:
+	•	MRV Unit technical training
+	•	GIS team training
+	•	CREMA user training
+	•	Safeguards unit training
+	•	Administrator training
+
+11. MAINTENANCE & SUPPORT
+Minimum:
+	•	12 months post-launch support
+	•	Bug fixes within defined SLA
+	•	Quarterly system health review
+	•	Performance optimization
+
+12. BIDDER QUALIFICATIONS
+Firms must demonstrate:
+	•	Experience in geospatial systems
+	•	Experience in carbon accounting systems (preferred)
+	•	Experience in government-scale digital platforms
+	•	Proven cybersecurity practices
+	•	Ability to support cloud or hybrid hosting
+	•	Strong UI/UX capacity
+	•	Experience in Africa preferred
+
+13. PROPOSAL REQUIREMENTS
+Technical Proposal must include:
+	•	Understanding of assignment
+	•	Detailed system architecture
+	•	Development methodology
+	•	Workplan
+	•	Team composition
+	•	Risk mitigation plan
+	•	Security architecture
+	•	Maintenance approach
+Financial Proposal must include:
+	•	Itemized cost breakdown
+	•	Phase-based pricing
+	•	Licensing costs
+	•	Hosting costs
+	•	Maintenance costs
+
+14. EVALUATION CRITERIA
+Criteria
+Weight
+Technical approach
+30%
+Experience
+20%
+System architecture quality
+20%
+Team qualifications
+10%
+Security & governance
+10%
+Cost
+10%
+
+15. OWNERSHIP
+All intellectual property, source code, and system documentation shall become the property of the Government of Ghana.
+Open-source solutions are preferred.
+
+16. CONFIDENTIALITY
+All data processed within the system shall remain the property of the Government of Ghana.
+No data may be shared without written authorization.
+
+17. EXPECTED IMPACT
+The platform will:
+	•	Operationalize Ghana’s Blue Carbon MRV system
+	•	Support high-integrity carbon participation
+	•	Enable ecosystem protection
+	•	Enhance governance transparency
+	•	Strengthen Article 6 readiness
+TERMS OF REFERENCE (ToR)
+Development of the National Blue Carbon MRV Digital Platform
+Republic of Ghana
+
+1. BACKGROUND
+The Government of Ghana has developed a comprehensive National Blue Carbon Monitoring, Reporting, and Verification (MRV) Framework to support:
+	•	National Greenhouse Gas (GHG) accounting under the UNFCCC
+	•	Nationally Determined Contribution (NDC) implementation
+	•	Article 6 participation
+	•	Voluntary carbon market engagement
+	•	Ecosystem conservation and restoration
+	•	Safeguards and governance monitoring
+The MRV framework includes high-integrity requirements such as:
+	•	≤10% total uncertainty in carbon estimation
+	•	≥90% classification accuracy for spatial monitoring
+	•	Soil carbon measurement to minimum 1-meter depth
+	•	Leakage and permanence accounting
+	•	Safeguards and social integrity monitoring
+	•	Traceability and audit-ready documentation
+To operationalize this framework, the Government intends to establish a secure, scalable, web-based National Blue Carbon MRV Digital Platform.
+The platform will serve as an internal government system with controlled access for CREMAs (Community Resource Management Areas) and authorized institutional users.
+The registry functionality will be minimal, as Ghana operates a separate National Carbon Trading Registry.
+
+2. OBJECTIVE OF THE ASSIGNMENT
+The objective of this consultancy is to design, develop, deploy, and support a fully functional National Blue Carbon MRV Digital Platform that:
+	•	Operationalizes the national MRV framework.
+	•	Supports near-real-time ecosystem monitoring.
+	•	Enables structured field data collection and validation.
+	•	Ensures traceability and compliance tracking.
+	•	Interfaces with the national carbon registry.
+	•	Supports audit and verification processes.
+	•	Ensures high levels of data integrity, governance, and cybersecurity.
+
+3. SCOPE OF SERVICES
+The Consultant shall undertake the following:
+
+3.1 System Design and Architecture
+	•	Conduct inception consultations with key stakeholders.
+	•	Produce detailed system architecture design.
+	•	Develop database schema and data model.
+	•	Define system security architecture.
+	•	Develop workflow architecture for approvals and compliance.
+	•	Provide UX/UI wireframes for validation prior to development.
+
+3.2 Development of Core System Modules
+The Consultant shall develop the following modules:
+
+A. User Management and Governance Module
+	•	Role-based access control.
+	•	Multi-level permission system.
+	•	Two-factor authentication.
+	•	Immutable audit log.
+	•	User activity tracking.
+User categories shall include:
+	•	MRV Administrator
+	•	Carbon Accounting Team
+	•	GIS Unit
+	•	Soil Laboratory Unit
+	•	Safeguards Unit
+	•	CREMA Users
+	•	District Reviewers
+	•	Auditor (read-only)
+
+B. Field Data Management Module
+	•	Permanent Sample Plot registry.
+	•	Biomass measurement entry forms.
+	•	Restoration monitoring forms.
+	•	Disturbance logging.
+	•	Photo upload with geotagging.
+	•	QA re-measurement documentation.
+	•	Offline data capture integration (ODK/Kobo or equivalent).
+
+C. Soil and Laboratory Management Module
+	•	Soil sample ID generation.
+	•	Chain-of-custody tracking.
+	•	Laboratory result entry.
+	•	Bulk density and soil carbon calculation tools.
+	•	Duplicate sample tracking.
+	•	Outlier detection.
+	•	QA flagging.
+
+D. GIS and Spatial Monitoring Module
+	•	Upload and storage of classified imagery.
+	•	Confusion matrix storage and validation.
+	•	≥90% classification accuracy tracking.
+	•	Change detection visualization.
+	•	Leakage belt mapping.
+	•	Version control of spatial outputs.
+
+E. Near-Real-Time Operational Monitoring Module
+	•	Integration with Sentinel-1 and Sentinel-2 imagery.
+	•	Automated change detection alerts.
+	•	Vegetation stress detection.
+	•	Restoration survival monitoring.
+	•	Alert generation and assignment workflow.
+	•	CREMA verification interface.
+	•	Operational dashboard and reporting tools.
+
+F. Carbon Accounting Module
+	•	Emission factor management.
+	•	Integration of biomass and soil data.
+	•	Carbon stock change calculations.
+	•	Uncertainty documentation.
+	•	Deduction calculations (leakage, buffer, conservative adjustment).
+	•	Issuance-ready report generation.
+
+G. Leakage and Permanence Monitoring Module
+	•	Leakage belt monitoring interface.
+	•	Market survey data entry.
+	•	Risk scoring interface.
+	•	Buffer tracking.
+	•	Reversal tracking.
+
+H. Safeguards and Social Integrity Module
+	•	FPIC documentation storage.
+	•	Governance composition tracking.
+	•	Grievance management system.
+	•	Benefit-sharing reporting.
+	•	Safeguard compliance dashboard.
+
+I. Traceability and Compliance Module
+	•	Requirement checklist system.
+	•	Evidence linking.
+	•	Automated compliance flags.
+	•	Issuance blocking if requirements incomplete.
+	•	Exportable traceability matrix.
+
+J. Registry Interface Module (Minimal)
+	•	Issuance Request Pack generation.
+	•	CSV/JSON export for registry ingestion.
+	•	Buffer ledger tracking.
+	•	Corresponding adjustment record storage.
+
+4. TECHNICAL REQUIREMENTS
+
+4.1 Architecture
+The platform shall:
+	•	Be web-based.
+	•	Be modular and scalable.
+	•	Support API integration.
+	•	Use a secure relational database with spatial capabilities.
+	•	Support role-based access control.
+
+4.2 Recommended Technology Stack
+Backend:
+	•	Python (Django / FastAPI) or Node.js
+Database:
+	•	PostgreSQL with PostGIS
+Frontend:
+	•	React or equivalent modern framework
+Mapping:
+	•	Leaflet / Mapbox
+Satellite Processing:
+	•	Google Earth Engine integration or equivalent
+
+4.3 Security Requirements
+	•	End-to-end encryption.
+	•	Secure authentication.
+	•	Full audit trail.
+	•	Weekly data backup.
+	•	Disaster recovery plan.
+	•	Penetration testing prior to launch.
+
+5. PERFORMANCE REQUIREMENTS
+Operational Monitoring:
+	•	Satellite ingestion delay ≤72 hours.
+	•	Alert generation ≤24 hours post-processing.
+	•	Alert-to-verification ≤14 days.
+	•	False positive rate ≤20%.
+System:
+	•	≥99% uptime.
+	•	Response time <3 seconds for dashboards.
+	•	Scalable to national data volumes.
+	•	Support at least 5,000+ plots and 10 years of imagery archive.
+
+6. DELIVERABLES
+The Consultant shall deliver:
+	•	Inception Report.
+	•	System Architecture Document.
+	•	Database Design Document.
+	•	UI/UX Wireframes.
+	•	Functional Prototype.
+	•	Beta Version.
+	•	Final Operational System.
+	•	Technical Documentation.
+	•	User Manuals.
+	•	Administrator Manuals.
+	•	Training Workshops (minimum three).
+	•	Maintenance Plan (minimum 12 months).
+
+7. IMPLEMENTATION SCHEDULE
+Expected duration: 12–18 months.
+Phase 1 – Design (2 months) Phase 2 – Core Development (4–6 months) Phase 3 – Operational Monitoring Module (4 months) Phase 4 – Carbon Accounting & Integration (3 months) Phase 5 – Testing & Deployment (2 months)
+
+8. QUALIFICATIONS OF THE CONSULTANT
+The Consultant must demonstrate:
+	•	Proven experience in large-scale digital platform development.
+	•	Experience in geospatial systems.
+	•	Experience in carbon accounting or environmental MRV systems.
+	•	Strong cybersecurity practices.
+	•	Capacity to deliver government-grade solutions.
+	•	Experience in Africa preferred.
+
+9. TEAM COMPOSITION
+The Consultant shall propose a multidisciplinary team including:
+	•	Project Manager
+	•	System Architect
+	•	Backend Developer(s)
+	•	Frontend Developer(s)
+	•	GIS Specialist
+	•	Carbon Accounting Specialist
+	•	Database Administrator
+	•	Cybersecurity Specialist
+	•	UX/UI Designer
+	•	QA/Test Engineer
+
+10. DURATION OF CONTRACT
+The contract duration shall be 12–18 months, including development, deployment, and initial support.
+
+11. REPORTING ARRANGEMENTS
+The Consultant shall report to:
+	•	Ministry of Environment, Science and Technology (MEST)
+	•	Ministry of Lands and Natural Resources (MLNR)
+Technical coordination shall be conducted with the National Blue Carbon MRV Unit.
+
+12. OWNERSHIP AND INTELLECTUAL PROPERTY
+All intellectual property, source code, documentation, and datasets developed under this assignment shall be the property of the Government of Ghana.
+Open-source solutions are strongly preferred.
+
+13. CONFIDENTIALITY
+All data processed within the system shall remain confidential and shall not be shared without prior written authorization.
+ANNEX 1: TECHNICAL SPECIFICATIONS
+1. SYSTEM ARCHITECTURE SPECIFICATIONS
+1.1 Architecture Requirements
+The platform shall:
+	•	Be web-based (browser accessible).
+	•	Use a modular architecture.
+	•	Support microservices for:
+	•	GIS processing
+	•	Carbon calculation engine
+	•	Alert processing engine
+	•	Be API-ready for future integrations.
+	•	Support horizontal scalability.
+	•	Be containerized (Docker preferred).
+	•	Be deployable in cloud or government data center.
+
+1.2 Database Requirements
+	•	PostgreSQL with PostGIS extension.
+	•	ACID-compliant transactions.
+	•	Immutable audit logging.
+	•	Version-controlled records (no destructive overwrite).
+	•	Spatial indexing.
+	•	Ability to store:
+	•	Raster metadata
+	•	Vector geometries
+	•	Large imagery metadata sets
+	•	Document attachments
+	•	Geotagged media
+
+1.3 Satellite & GIS Processing
+The system shall:
+	•	Integrate with Google Earth Engine (preferred) or equivalent.
+	•	Process:
+	•	Sentinel-1
+	•	Sentinel-2
+	•	Generate:
+	•	Change detection layers
+	•	Stress layers
+	•	Hotspot alerts
+	•	Archive:
+	•	Confusion matrices
+	•	Model versions
+	•	Training/validation dataset metadata
+Minimum mapping unit configurable (default: 0.1 ha).
+
+1.4 Carbon Accounting Engine
+The system shall support:
+	•	Emission factor storage (Tier 1–3).
+	•	Biomass carbon calculation.
+	•	Soil carbon calculation.
+	•	Uncertainty propagation documentation.
+	•	Deduction application:
+	•	Leakage
+	•	Buffer
+	•	Conservative adjustment
+	•	Carbon issuance summary generation.
+Carbon calculations may initially be hybrid (import/export model integration) but must support future internal automation.
+
+1.5 Safeguards & Social Integrity
+The system shall:
+	•	Track governance composition.
+	•	Auto-flag non-compliance thresholds.
+	•	Store FPIC documentation.
+	•	Provide grievance tracking with status workflow.
+	•	Generate safeguard compliance summaries.
+
+1.6 Security & Compliance
+	•	Role-based access control.
+	•	Multi-factor authentication.
+	•	Immutable audit logs.
+	•	Encrypted data transmission (HTTPS/TLS 1.2+).
+	•	Weekly backups.
+	•	Disaster recovery plan.
+	•	Penetration testing prior to launch.
+	•	Compliance with Ghana Data Protection Act.
+
+1.7 Performance Requirements
+	•	99% uptime.
+	•	≤3-second dashboard load time.
+	•	≤72-hour satellite ingestion delay.
+	•	≤24-hour alert processing time.
+	•	Support at least:
+	•	5,000+ plots
+	•	10 years of imagery metadata
+	•	1,000 concurrent users (scalable)
+
+ANNEX 2: REPORTING TEMPLATES (SYSTEM-GENERATED)
+The platform shall automatically generate the following reports.
+
+2.1 Annual National Monitoring Report
+Must include:
+	•	Total mangrove area by stratum.
+	•	Annual gain/loss.
+	•	Classification accuracy statistics.
+	•	Carbon stock summary.
+	•	Leakage summary.
+	•	Safeguards summary.
+	•	Buffer balance.
+	•	Reversal events (if any).
+Export format:
+	•	PDF
+	•	Excel
+	•	CSV
+
+2.2 Carbon Stock Change Report
+Fields required:
+	•	Baseline stock
+	•	Current stock
+	•	Net change
+	•	Uncertainty (%)
+	•	Leakage deduction
+	•	Buffer allocation
+	•	Net credits eligible
+Export format:
+	•	Registry-ready CSV
+	•	Signed PDF summary
+
+2.3 Operational Monitoring Report (Monthly/Quarterly)
+	•	Alerts generated
+	•	Alerts verified
+	•	False positive rate
+	•	Restoration risk sites
+	•	Leakage belt activity
+	•	Time-to-verification metrics
+
+2.4 Safeguard Compliance Report
+	•	FPIC completion rate
+	•	Governance composition breakdown
+	•	Grievances filed/resolved
+	•	Inclusion compliance
+	•	Benefit-sharing reporting status
+
+2.5 Traceability Matrix Export
+The system shall export:
+	•	Requirement ID
+	•	Linked document/evidence
+	•	Status
+	•	Responsible unit
+	•	Monitoring cycle reference
+Export format:
+	•	Excel
+	•	PDF
+
+ANNEX 3: ACCEPTANCE CRITERIA
+The system shall be accepted only upon successful completion of the following tests.
+
+3.1 Functional Acceptance
+The system must demonstrate:
+	•	Successful role-based login.
+	•	Plot creation and editing workflow.
+	•	Soil sample tracking with chain-of-custody.
+	•	GIS layer upload and visualization.
+	•	Change detection alert generation.
+	•	Alert assignment and closure workflow.
+	•	Carbon calculation report generation.
+	•	Traceability matrix export.
+	•	Registry issuance export.
+	•	Safeguards tracking and reporting.
+All workflows must function without system crash.
+
+3.2 Performance Acceptance
+The system must demonstrate:
+	•	Dashboard load time ≤3 seconds.
+	•	Imagery ingestion within 72 hours.
+	•	Alert generation within 24 hours of processing.
+	•	Support for at least 100 concurrent test users.
+
+3.3 Data Integrity Tests
+	•	No overwriting of historical records.
+	•	Audit log captures:
+	•	User
+	•	Timestamp
+	•	Action performed
+	•	Plot data linked correctly to carbon calculations.
+	•	Deletion of records disabled or restricted to admin with full log.
+
+3.4 Security Acceptance
+	•	Successful penetration test.
+	•	Secure authentication enforcement.
+	•	Encrypted file storage.
+	•	Backup and restore test completed successfully.
+
+3.5 Compliance Acceptance
+The system must:
+	•	Block issuance if:
+	•	Classification accuracy <90%.
+	•	Uncertainty >10%.
+	•	Leakage assessment incomplete.
+	•	Safeguards incomplete.
+	•	Maintain traceability mapping for all MRV requirements.
+
+3.6 User Acceptance Testing (UAT)
+Minimum three stakeholder groups must certify:
+	•	MRV Unit
+	•	GIS Team
+	•	CREMA Representatives
+Signed UAT report required before final acceptance.
+
+3.7 Documentation Acceptance
+The contractor must deliver:
+	•	System architecture documentation.
+	•	API documentation.
+	•	Database schema.
+	•	Administrator manual.
+	•	User manual.
+	•	Maintenance plan.
+	•	Security protocol document.
+Acceptance requires documentation review and approval.
+
+ANNEX 4: SERVICE LEVEL AGREEMENTS (OPTIONAL ADD-ON)
+If maintenance contract included:
+	•	Critical bug fix: ≤48 hours
+	•	Major bug fix: ≤5 business days
+	•	Minor bug fix: ≤15 business days
+	•	System uptime ≥99%
+	•	Quarterly performance report required
+
+SYSTEM READINESS STANDARD
+The system shall only be considered complete when:
+	•	All modules operational.
+	•	All acceptance tests passed.
+	•	All documentation delivered.
+	•	All training completed.
+	•	Final security audit passed.
+	•	Written approval issued by Government.
+

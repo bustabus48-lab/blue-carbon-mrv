@@ -40,7 +40,11 @@ export async function updateSession(request: NextRequest) {
         request.nextUrl.pathname.startsWith('/dashboard') ||
         request.nextUrl.pathname.startsWith('/alerts') ||
         request.nextUrl.pathname.startsWith('/database') ||
-        request.nextUrl.pathname.startsWith('/settings');
+        request.nextUrl.pathname.startsWith('/settings') ||
+        request.nextUrl.pathname.startsWith('/plots') ||
+        request.nextUrl.pathname.startsWith('/users');
+
+    const isAuthRoute = request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/';
 
     if (!user && isProtectedRoute) {
         // no user, potentially respond by redirecting the user to the login page
@@ -49,8 +53,8 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url)
     }
 
-    // If user is logged in and trying to access login page, redirect to dashboard
-    if (user && request.nextUrl.pathname.startsWith('/login')) {
+    // If user is logged in and trying to access login page or root, redirect to dashboard
+    if (user && isAuthRoute) {
         const url = request.nextUrl.clone()
         url.pathname = '/dashboard'
         return NextResponse.redirect(url)

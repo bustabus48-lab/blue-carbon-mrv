@@ -1,7 +1,6 @@
 "use client";
 
 import { Bell, Search, User, LogOut } from "lucide-react";
-import { logout } from "@/app/login/actions";
 
 export function Header() {
     return (
@@ -27,12 +26,10 @@ export function Header() {
                     </div>
                     {/* Simple dropdown for logout */}
                     <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-slate-800 border border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                        <form action={logout}>
-                            <button type="submit" className="w-full text-left px-4 py-2 flex items-center gap-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors rounded-md">
-                                <LogOut className="w-4 h-4" />
-                                Sign out
-                            </button>
-                        </form>
+                        <a href="/api/auth/logout" className="w-full text-left px-4 py-2 flex items-center gap-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors rounded-md cursor-pointer block">
+                            <LogOut className="w-4 h-4 shrink-0 inline-block mr-1" />
+                            Sign out
+                        </a>
                     </div>
                 </div>
             </div>

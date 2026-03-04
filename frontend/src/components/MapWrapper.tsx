@@ -8,8 +8,10 @@ const DashboardMap = dynamic(() => import("@/components/Map"), {
 });
 
 interface MapWrapperProps {
-    plots: any[];
-    alerts: any[];
+    plots?: any[];
+    alerts?: any[];
+    leakageZones?: any[];
+    samplePlots?: any[];
 }
 
 export default function MapWrapper(props: MapWrapperProps) {

@@ -13,11 +13,13 @@ L.Icon.Default.mergeOptions({
 });
 
 interface MapProps {
-    plots: any[];
-    alerts: any[];
+    plots?: any[];
+    alerts?: any[];
+    leakageZones?: any[];
+    samplePlots?: any[];
 }
 
-export default function Map({ plots, alerts }: MapProps) {
+export default function Map({ plots = [], alerts = [], leakageZones = [], samplePlots = [] }: MapProps) {
     const ghanaCenter: [number, number] = [5.6, -0.2];
 
     return (
@@ -59,6 +61,48 @@ export default function Map({ plots, alerts }: MapProps) {
                             <span className="text-slate-600">Severity: {alert.severity}</span><br />
                             <span className="text-slate-600">Status: {alert.status}</span><br />
                             <span className="text-slate-600">Area: {alert.detected_area_ha} ha</span>
+                        </div>
+                    </Tooltip>
+                </GeoJSON>
+            ))}
+
+            {leakageZones.map((zone) => (
+                <GeoJSON
+                    key={zone.id}
+                    data={zone.geojson}
+                    pathOptions={{ color: '#8b5cf6', weight: 2, dashArray: '5, 5', fillOpacity: 0.1 }}
+                >
+                    <Tooltip sticky>
+                        <div className="text-sm p-1">
+                            <strong className="text-violet-600">Buffer Zone</strong><br />
+                            <span className="text-slate-600">Name: {zone.zone_name}</span><br />
+                            <span className="text-slate-600">Area: {zone.area_ha} ha</span>
+                        </div>
+                    </Tooltip>
+                </GeoJSON>
+            ))}
+
+            {samplePlots.map((plot) => (
+                <GeoJSON
+                    key={plot.id}
+                    data={plot.geojson}
+                    pointToLayer={(feature, latlng) => {
+                        return L.circleMarker(latlng, {
+                            radius: 6,
+                            fillColor: "#0ea5e9",
+                            color: "#fff",
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0.9
+                        });
+                    }}
+                >
+                    <Tooltip sticky>
+                        <div className="text-sm p-1">
+                            <strong className="text-sky-600">Sample Plot QA/QC</strong><br />
+                            <span className="text-slate-600">Name: {plot.plot_name}</span><br />
+                            <span className="text-slate-600">Stratum: {plot.stratum}</span><br />
+                            <span className="text-slate-600 leading-tight">Status: <span className="font-medium text-slate-800">{plot.status}</span></span>
                         </div>
                     </Tooltip>
                 </GeoJSON>
