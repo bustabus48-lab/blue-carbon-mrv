@@ -30,12 +30,34 @@ export default async function DashboardPage() {
     const { data: geoAlerts } = await supabase.from('geojson_alerts').select('*').neq('status', 'Verified');
     const { data: geoLeakage } = await supabase.from('geojson_leakage_zones').select('*');
     const { data: geoSamplePlots } = await supabase.from('geojson_sample_plots').select('*');
+    const { data: geoProjectAreas } = await supabase.from('geojson_project_areas').select('*');
+
+    // 5. Fetch latest classification run for 7-day operations status
+    const { data: latestClassificationRun } = await supabase
+        .from('classification_runs')
+        .select('status, run_window_end, completed_at')
+        .order('run_window_end', { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
     const stats = [
         { title: "Mangrove Extent (Ha)", value: totalArea.toLocaleString(undefined, { maximumFractionDigits: 1 }), change: "Live Sync", trend: "up", icon: TreePine },
         { title: "Active Alerts", value: activeAlerts.toString(), change: "Action needed", trend: "down", icon: AlertTriangle },
         { title: "Verification Rate", value: `${verificationRate}%`, change: "Overall", trend: "neutral", icon: ShieldCheck },
         { title: "Restoration Risk", value: "Low", change: "Stable", trend: "neutral", icon: Activity },
+    ];
+
+    const classificationStatus = latestClassificationRun
+        ? `${latestClassificationRun.status} · ${latestClassificationRun.run_window_end ?? 'N/A'}`
+        : 'No 7-day runs yet';
+
+    const classificationAge = latestClassificationRun?.completed_at
+        ? formatDistanceToNow(new Date(latestClassificationRun.completed_at), { addSuffix: true })
+        : 'Not available';
+
+    const statsWithClassification = [
+        ...stats,
+        { title: '7-Day Classification', value: classificationStatus, change: classificationAge, trend: 'neutral', icon: Activity },
     ];
 
     return (
@@ -46,8 +68,8 @@ export default async function DashboardPage() {
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {stats.map((stat, i) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                {statsWithClassification.map((stat, i) => (
                     <div key={i} className="bg-slate-900 border border-slate-800 rounded-xl p-6">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-sm font-medium text-slate-400">{stat.title}</h3>
@@ -74,6 +96,7 @@ export default async function DashboardPage() {
                         alerts={geoAlerts || []}
                         leakageZones={geoLeakage || []}
                         samplePlots={geoSamplePlots || []}
+                        projectAreas={geoProjectAreas || []}
                     />
                 </div>
                 <div className="bg-slate-900 border border-slate-800 rounded-xl min-h-[400px] overflow-hidden flex flex-col">
