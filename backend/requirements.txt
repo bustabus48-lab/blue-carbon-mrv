@@ -7,3 +7,4 @@ geoalchemy2
 pydantic
 earthengine-api
 python-dotenv
+apscheduler

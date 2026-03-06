@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { DownloadCloud, Activity, DatabaseZap } from "lucide-react";
+import { DatabaseZap } from "lucide-react";
 import ExportManager from "./ExportManager";
 
 export const dynamic = "force-dynamic";
@@ -7,7 +7,8 @@ export const dynamic = "force-dynamic";
 export default async function RegistryInterfacePage() {
     const supabase = await createClient();
 
-    // Fetch the active monitoring cycle
+    const { data: projects } = await supabase.from("projects").select("id, name, region").order("name");
+
     const { data: activeCycles } = await supabase
         .from('monitoring_cycles')
         .select('*')
@@ -16,14 +17,12 @@ export default async function RegistryInterfacePage() {
 
     const activeCycle = activeCycles?.[0];
 
-    // Check if the gateway is unlocked for the active cycle
     let isGatewayUnlocked = false;
     if (activeCycle) {
         const { data: checklists } = await supabase
             .from('compliance_checklists')
             .select('is_met')
             .eq('cycle_id', activeCycle.id);
-
         if (checklists && checklists.length > 0) {
             isGatewayUnlocked = checklists.every(c => c.is_met);
         }
@@ -46,6 +45,7 @@ export default async function RegistryInterfacePage() {
             <ExportManager
                 activeCycle={activeCycle}
                 isGatewayUnlocked={isGatewayUnlocked}
+                projects={projects || []}
             />
         </div>
     );

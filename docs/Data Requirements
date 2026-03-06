@@ -1,0 +1,21 @@
+# Blue Carbon MRV: Data Input Requirements
+
+To transition the web app from using placeholder data to reflecting its actual purpose—running a certified Monitoring, Reporting, and Verification (MRV) system for the Keta/Songor landscapes—we need to feed it specific, real-world data points.
+
+Below is a table classifying the exact data required, the module it belongs to, and the source/format it should take.
+
+| Module | Data Category | Specific Data Inputs Required | Source / Entry Method |
+| :--- | :--- | :--- | :--- |
+| **Maps & Polygons** | **Project Boundaries** | Official Keta Ramsar Site bounds, baseline mangrove extent polygons (19,900 ha target). | Uploaded via `.geojson` or `.kml` (from GIS team). |
+| **Maps & Polygons** | **Zoning** | Specific restoration plots (areas targeted for planting vs. conservation), Leakage zones (buffer rings around project). | Uploaded via `.geojson`. |
+| **Plots (Sample)** | **Ground Truth Locations** | Latitude/Longitude coordinates of permanent sample plots (e.g., the 20x20m grids used for forest inventory). | Manual UI entry coordinate or bulk CSV upload. |
+| **Carbon Accounting** | **Soil Data (Cores)** | Soil bulk density ($g/cm^3$), Soil Organic Carbon fraction ($C_{org}$), core depth profiles (0-100cm). | Entered manually into UI from lab results. |
+| **Carbon Accounting** | **Biomass Data** | Tree species (e.g., *Avicennia*, *Rhizophora*), Diameter at Breast Height (DBH), canopy height. | Entered manually into UI from field inventory sheets. |
+| **Safeguards** | **Community Governance** | FPIC (Free Prior and Informed Consent) signed documents, Community grievance logs (complaints, resolution status). | Scanned PDFs uploaded to the File Management module. |
+| **Safeguards** | **Biodiversity** | Species sightings (especially IUCN Red List species in the Ramsar site). | Text entries and photos via UI. |
+| **Alerts (Remote Sensing)** | **Deforestation Tracking** | SAR (Synthetic Aperture Radar) canopy change alerts, NDVI vitality drops in the restoration plots. | API connection (e.g., Google Earth Engine) pushing data to the backend. |
+| **Registry & Export** | **Project Meta** | Project Start Date, Crediting Period, Verification Standard (e.g., Verra VM0007), Total Estimated $tCO_2e$. | Admin settings UI. |
+
+## Moving Forward
+
+By systematically replacing our currently hardcoded numbers (like the "89% Verification Rate" or "4 Active Alerts" in the dashboard) with dynamic SQL queries hitting this real data, the application will transform into an interactive, audit-ready MRV platform.

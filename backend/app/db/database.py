@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 
 # Load environment variables, primarily looking for DB_URL 
 # (either local from .env.supabase or a production URL)
-load_dotenv("../../.env.supabase")
+load_dotenv(os.path.join(os.path.dirname(__file__), "../../../.env.supabase"))
+load_dotenv("../.env.supabase")
 load_dotenv()
 
 # Build the async database URL

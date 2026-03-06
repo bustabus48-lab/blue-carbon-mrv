@@ -1,0 +1,37 @@
+# Comprehensive Final Review: Ghana Blue Carbon MRV Platform
+
+Based on your exact goals, here is a detailed review of how the current codebase aligns with the requirements of a Monitoring, Reporting, and Verification (MRV) platform for Blue Carbon Projects in Ghana.
+
+| Specific MRV Goal | Assessment & Current Capability | Status |
+| :--- | :--- | :--- |
+| **Ingest baseline information from any coastal area in Ghana** and produce a UI for easy understanding | The web app features a modular dashboard (Soil Lab, Biomass, Compliance, Map layers) designed specifically for MRV workflows. However, the current data pipelines (the Python scripts handling data) are somewhat hardcoded to specific areas (like Keta/Songor) and lack a user-friendly way to initialize brand-new districts from scratch. | **Partially Met** |
+| **Save polygons for Areas to be Restored, Conserved/Protected** | We recently synced the codebase to include a master `ProjectArea` spatial table. This means the app now has the database capacity to accept a polygon and distinctly tag it as `restoration`, `conservation`, or `protection`. | **Mostly Met** |
+| **Polygons for Permanent Sample Plots (PSP)** | The database schema has a `SamplePlot` model capable of plotting coordinates, but right now it only accepts point locations (Lat/Long pins) rather than full 20x20m polygons. | **Partially Met** |
+| **Map interface for buffer zones & all uploaded/saved polygons** | The new central `Maps & Polygons` module provides a Leaflet interface that successfully draws Mangrove Plots, Leakage Zones (buffers), and Alerts all on one unified canvas. You can upload `.geojson` files directly from the UI. | **Met** |
+| **Keep social, economic, safeguards, FPIC, environmental pressures, and restoration data** for audits | The app has dedicated sections (`/safeguards`, `/compliance`) providing a framework for these. However, much of the data is currently presented using placeholders. True structural tables for "environmental pressures" and verifiable "FPIC document traces" exist theoretically but require "hardening" to link the frontend to the backend reliably for an auditor. | **Needs Hardening** |
+| **Take uploads and store them in the database for present/future use** | You can upload GeoJSON files in the registry/maps sections, and we have updated the backend to persist these shapes into the robust PostGIS geospatial database for future querying. | **Met** |
+| **Module that automatically classifies 7-day satellite imagery to detect change** | The app possesses an "Alerts" dashboard capable of displaying changes. However, there is **no automated engine** behind it. The system relies on data being fed to it; it currently cannot independently contact a satellite provider (like Google Earth Engine or Sentinel Hub) every 7 days, process the image, classify the mangrove loss, and push it to the app. | **Not Met** |
+
+---
+
+## Strategic Recommendations for Improvement
+
+Before we begin the App Hardening phase, we must acknowledge the trajectory we need to take. The app currently looks great and acts as a powerful Prototype/MVP, but to be an **audit-ready MRV platform**, we need to implement the following recommendations:
+
+### 1. Build the Automated Remote Sensing Pipeline
+
+To detect changes every 7 days, we need to build a backend orchestrator (a CRON job) connecting to a remote sensing API (like Google Earth Engine or Planetary Computer). This process must run silently in the background, download the SAR/Optical imagery, run a classification algorithm to detect deforestation or regeneration, and automatically inject new rows into the `alerts` table for the frontend dashboard to display.
+
+### 2. Generalize Baseline Ingestion
+
+Instead of running a python script on your Mac to seed Keta data, the app needs a robust "Project Setup Wizard" in the UI. An administrator should be able to click "Create New Project", define the coastal area bounds of a new district in Ghana, and upload the zip file of baseline data straight from the browser.
+
+### 3. Implement Immutable Audit Trails
+
+For an auditor to trust this system, we cannot just show them data; we must show provenance. Every action—uploading a polygon, approving FPIC documentation, recording a soil core sample—must be stamped with the user's ID, a timestamp, and be completely immutable (cannot be secretly deleted without a trace).
+
+### 4. Upgrade Permanent Sample Plots to Full Geometries
+
+If your standard operating procedure requires drawing the exact 20x20m bounding boxes of sample plots instead of just dropping a center-pin, we need to upgrade the `SamplePlot` table in the database to accept complex `POLYGON` geometries, rather than simple `POINT` geometries.
+
+**Conclusion:** The web UI is beautifully laid out to house this MRV data, and the PostGIS database is perfectly equipped to handle the spatial relationships. The next goal is to "harden" the system by bridging the gaps mentioned above—replacing placeholders with live, secure, user-uploaded data points, and finally building the automated satellite classification engine.

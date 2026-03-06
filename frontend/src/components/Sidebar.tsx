@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, AlertCircle, Database, Settings, Map as MapIcon, Leaf, LogOut, TreePine, Users, Microscope, Calculator, ShieldAlert, HeartHandshake, ShieldCheck, DownloadCloud } from "lucide-react";
+import { LayoutDashboard, AlertCircle, Database, Settings, Map as MapIcon, Leaf, LogOut, TreePine, Users, Microscope, Calculator, ShieldAlert, HeartHandshake, ShieldCheck, DownloadCloud, MapPin } from "lucide-react";
 
 export function Sidebar({ userRole = 'crema_agent' }: { userRole?: string }) {
     const pathname = usePathname();
 
     const navItems = [
         { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+        { name: "Projects Setup", href: "/projects/new", icon: MapPin },
         { name: "Maps & Polygons", href: "/maps", icon: MapIcon },
         { name: "Alerts", href: "/alerts", icon: AlertCircle },
         { name: "Plots", href: "/plots", icon: TreePine },

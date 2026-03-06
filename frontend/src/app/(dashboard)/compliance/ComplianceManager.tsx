@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { format } from "date-fns";
 import { CheckCircle2, Circle, ShieldCheck, AlertCircle, FileText, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { ProjectFilter } from "@/components/ProjectFilter";
 
 type MonitoringCycle = {
     id: string;
@@ -22,26 +23,33 @@ type ChecklistItem = {
     verified_by: string;
     verified_at: string;
     notes: string;
+    project_id?: string;
 };
 
-export default function ComplianceManager({ cycles, initialChecklists, isAdmin, userEmail }: {
+export default function ComplianceManager({ cycles, initialChecklists, isAdmin, userEmail, projects = [] }: {
     cycles: MonitoringCycle[],
     initialChecklists: ChecklistItem[],
     isAdmin: boolean,
-    userEmail: string
+    userEmail: string,
+    projects?: any[]
 }) {
     const router = useRouter();
     const supabase = createClient();
     const [selectedCycleId, setSelectedCycleId] = useState<string>(cycles.length > 0 ? cycles[0].id : "");
     const [checklists, setChecklists] = useState<ChecklistItem[]>(initialChecklists);
+    const [selectedProjectId, setSelectedProjectId] = useState("all");
     const [isVerifying, setIsVerifying] = useState(false);
 
     const activeCycle = useMemo(() => cycles.find(c => c.id === selectedCycleId), [cycles, selectedCycleId]);
 
-    // Filter checklists for the active cycle
+    // Filter checklists for the active cycle and project
     const currentChecklists = useMemo(() => {
-        return checklists.filter(c => c.cycle_id === selectedCycleId);
-    }, [checklists, selectedCycleId]);
+        let items = checklists.filter(c => c.cycle_id === selectedCycleId);
+        if (selectedProjectId !== "all") {
+            items = items.filter(c => c.project_id === selectedProjectId);
+        }
+        return items;
+    }, [checklists, selectedCycleId, selectedProjectId]);
 
     // Calculate score
     const totalItems = currentChecklists.length;
@@ -96,6 +104,7 @@ export default function ComplianceManager({ cycles, initialChecklists, isAdmin, 
                             ))}
                         </select>
                     </div>
+                    <ProjectFilter projects={projects} selectedProjectId={selectedProjectId} onProjectChange={setSelectedProjectId} />
 
                     <div className="flex items-center gap-2">
                         <span className="text-sm text-gray-500 dark:text-gray-400">Scorecard:</span>

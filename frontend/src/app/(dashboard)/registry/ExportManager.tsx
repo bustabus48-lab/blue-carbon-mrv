@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { DownloadCloud, FileText, Database, ShieldAlert, AlertTriangle, DatabaseZap } from "lucide-react";
 import Link from "next/link";
 
-export default function ExportManager({ activeCycle, isGatewayUnlocked }: { activeCycle: any, isGatewayUnlocked: boolean }) {
+export default function ExportManager({ activeCycle, isGatewayUnlocked, projects }: { activeCycle: any, isGatewayUnlocked: boolean, projects?: any[] }) {
     const supabase = createClient();
     const [isExporting, setIsExporting] = useState<string | null>(null);
 

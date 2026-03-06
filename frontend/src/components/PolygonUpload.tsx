@@ -1,19 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UploadCloud, CheckCircle2, Loader2, X } from "lucide-react";
 
 const AREA_TYPE_OPTIONS = [
-    { value: "restoration", label: "Restoration" },
-    { value: "conservation", label: "Conservation" },
-    { value: "protection", label: "Protection" },
+    { value: "project_boundary", label: "Project Boundary" },
+    { value: "mangrove_extent", label: "Mangrove Extent Map" },
+    { value: "restoration", label: "Restoration Zone" },
+    { value: "conservation", label: "Conservation / Protection" },
     { value: "buffer", label: "Buffer Zone" },
+    { value: "hydrology", label: "Hydrology / Creek" },
     { value: "reference", label: "Reference Area" },
 ];
+
+interface ProjectOption {
+    id: string;
+    name: string;
+}
 
 export default function PolygonUpload() {
     const [file, setFile] = useState<File | null>(null);
     const [areaType, setAreaType] = useState("restoration");
+    const [projectId, setProjectId] = useState("");
+    const [projects, setProjects] = useState<ProjectOption[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadResult, setUploadResult] = useState<{
         message: string;
@@ -22,6 +31,16 @@ export default function PolygonUpload() {
         skipped_count?: number;
     } | null>(null);
     const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetch("http://127.0.0.1:8000/api/v1/projects/")
+            .then(res => res.json())
+            .then(data => {
+                setProjects(data);
+                if (data.length > 0) setProjectId(data[0].id);
+            })
+            .catch(() => { });
+    }, []);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -36,9 +55,14 @@ export default function PolygonUpload() {
             setError("Please select a file first.");
             return;
         }
+        if (!projectId) {
+            setError("Please select a project to attach this layer to.");
+            return;
+        }
 
-        if (!file.name.endsWith(".geojson") && !file.name.endsWith(".json")) {
-            setError("Only .geojson files are supported.");
+        const fileName = file.name.toLowerCase();
+        if (!fileName.endsWith(".geojson") && !fileName.endsWith(".json") && !fileName.endsWith(".kml") && !fileName.endsWith(".tif") && !fileName.endsWith(".tiff")) {
+            setError("Only .geojson, .json, .kml, and .tif(f) files are supported.");
             return;
         }
 
@@ -49,6 +73,7 @@ export default function PolygonUpload() {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("area_type", areaType);
+        formData.append("project_id", projectId);
 
         try {
             const res = await fetch("http://127.0.0.1:8000/api/v1/uploads/spatial", {
@@ -85,12 +110,30 @@ export default function PolygonUpload() {
             </h3>
 
             <p className="text-sm text-slate-400 mb-6">
-                Upload polygon GeoJSON and assign the area type for restoration, conservation, protection, buffer, or reference mapping.
+                Upload a GeoJSON layer and assign it to a project.
             </p>
 
             <div className="space-y-4">
+                {/* Project Selector */}
                 <div>
-                    <label className="block text-sm text-slate-300 mb-2">Area Type</label>
+                    <label className="block text-sm text-slate-300 mb-2">Project</label>
+                    <select
+                        value={projectId}
+                        onChange={(e) => setProjectId(e.target.value)}
+                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                    >
+                        {projects.length === 0 && (
+                            <option value="">No projects found — create one first</option>
+                        )}
+                        {projects.map(p => (
+                            <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
+                    </select>
+                </div>
+
+                {/* Area Type */}
+                <div>
+                    <label className="block text-sm text-slate-300 mb-2">Layer Type</label>
                     <select
                         value={areaType}
                         onChange={(e) => setAreaType(e.target.value)}
@@ -111,12 +154,12 @@ export default function PolygonUpload() {
                             <p className="mb-2 text-sm text-slate-400">
                                 <span className="font-semibold text-emerald-500">Click to upload</span> or drag and drop
                             </p>
-                            <p className="text-xs text-slate-500">GeoJSON or JSON (MAX. 50MB)</p>
+                            <p className="text-xs text-slate-500">GeoJSON, KML, or TIFF (MAX. 50MB)</p>
                         </div>
                         <input
                             type="file"
                             className="hidden"
-                            accept=".geojson,.json,application/geo+json,application/json"
+                            accept=".geojson,.json,.kml,.tif,.tiff,application/geo+json,application/json,application/vnd.google-earth.kml+xml,image/tiff"
                             onChange={handleFileChange}
                         />
                     </label>
@@ -148,7 +191,7 @@ export default function PolygonUpload() {
                 <div className="flex justify-end pt-2">
                     <button
                         onClick={handleUpload}
-                        disabled={!file || isUploading}
+                        disabled={!file || isUploading || !projectId}
                         className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
