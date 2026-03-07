@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, AlertCircle, Database, Settings, Map as MapIcon, Leaf, LogOut, TreePine, Users, Microscope, Calculator, ShieldAlert, HeartHandshake, ShieldCheck, DownloadCloud, MapPin } from "lucide-react";
+import { LayoutDashboard, AlertCircle, Database, Settings, Map as MapIcon, Leaf, LogOut, TreePine, Users, Microscope, Calculator, ShieldAlert, HeartHandshake, ShieldCheck, DownloadCloud, MapPin, Activity } from "lucide-react";
 
 export function Sidebar({ userRole = 'crema_agent' }: { userRole?: string }) {
     const pathname = usePathname();
@@ -22,6 +22,7 @@ export function Sidebar({ userRole = 'crema_agent' }: { userRole?: string }) {
         { name: "Database", href: "/database", icon: Database },
         ...(userRole === 'admin' ? [{ name: "Users", href: "/users", icon: Users }] : []),
         { name: "Settings", href: "/settings", icon: Settings },
+        { name: "Operations & QA", href: "/operations", icon: Activity },
     ];
 
     return (
