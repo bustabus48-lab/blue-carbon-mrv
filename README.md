@@ -57,6 +57,30 @@ The app will be available at `http://localhost:3000`.
    - `SUPABASE_SERVICE_ROLE_KEY`
 3. Deploy.
 
+## CI/CD (GitHub Actions)
+
+Two workflows run automatically:
+
+| Workflow | Trigger | Jobs |
+|---|---|---|
+| **CI** (`ci.yml`) | Pull request → `main` | Frontend lint + type-check + build; Backend syntax check |
+| **Deploy** (`deploy.yml`) | Push to `main` / manual | Supabase migrations → Vercel production deploy |
+
+### Required GitHub Secrets
+
+Configure these in **Repository → Settings → Secrets and variables → Actions**:
+
+| Secret | Description |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL (`https://<ref>.supabase.co`) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key |
+| `SUPABASE_ACCESS_TOKEN` | Supabase personal access token (for the CLI) |
+| `SUPABASE_DB_PASSWORD` | Supabase database password |
+| `SUPABASE_PROJECT_ID` | Supabase project reference ID (from the dashboard URL) |
+| `VERCEL_TOKEN` | Vercel API token |
+| `VERCEL_ORG_ID` | Vercel team/org ID |
+| `VERCEL_PROJECT_ID` | Vercel project ID |
+
 ## Documents
 
 The original project requirements and blueprints are located in the `docs/` directory.
