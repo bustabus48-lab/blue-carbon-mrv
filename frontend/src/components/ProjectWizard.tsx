@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { UploadCloud, CheckCircle2, Loader2, X, MapPin, Calendar, Globe, Map as MapIcon, ArrowRight, ArrowLeft, AlertCircle, Layers, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { API_BASE_URL } from "@/lib/api";
 
 const AREA_TYPE_OPTIONS = [
     { value: "project_boundary", label: "Project Boundary (outermost perimeter)" },
@@ -52,11 +52,10 @@ export default function ProjectWizard() {
     const [existingProjects, setExistingProjects] = useState<ProjectOption[]>([]);
 
     useEffect(() => {
-        const supabase = createClient();
-        supabase.from('projects').select('id, name').order('name')
-            .then(({ data, error }) => {
-                if (!error && data) setExistingProjects(data);
-            });
+        fetch(`${API_BASE_URL}/api/v1/projects/`)
+            .then(res => res.json())
+            .then(data => setExistingProjects(data))
+            .catch(() => { });
     }, []);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,10 +85,10 @@ export default function ProjectWizard() {
         setError(null);
 
         try {
-            const supabase = createClient();
-            const { data, error } = await supabase
-                .from('projects')
-                .insert({
+            const res = await fetch(`${API_BASE_URL}/api/v1/projects/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
                     name: projectName,
                     region,
                     district: district || null,
@@ -131,12 +130,15 @@ export default function ProjectWizard() {
         setError(null);
 
         try {
-            const text = await file.text();
-            const geojson = JSON.parse(text);
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("area_type", areaType);
+            formData.append("project_id", createdProjectId);
 
-            if (geojson.type !== "FeatureCollection") {
-                throw new Error("File is not a valid GeoJSON FeatureCollection");
-            }
+            const res = await fetch(`${API_BASE_URL}/api/v1/uploads/spatial`, {
+                method: "POST",
+                body: formData,
+            });
 
             const features = geojson.features ?? [];
             if (features.length === 0) {

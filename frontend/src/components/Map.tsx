@@ -1,23 +1,27 @@
 "use client";
 
 import { MapContainer, TileLayer, GeoJSON, Tooltip, LayersControl, FeatureGroup } from 'react-leaflet';
+import type { GeoJsonObject } from 'geojson';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 // Fix leaflet marker icon issues in Next.js if a point is ever rendered
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: string })._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
     iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
     shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
+type FeatureRow = Record<string, unknown> & { id: string; geojson: GeoJsonObject };
+
 interface MapProps {
-    plots?: any[];
-    alerts?: any[];
-    leakageZones?: any[];
-    samplePlots?: any[];
-    projectAreas?: any[];
+    plots?: FeatureRow[];
+    alerts?: FeatureRow[];
+    leakageZones?: FeatureRow[];
+    samplePlots?: FeatureRow[];
+    projectAreas?: FeatureRow[];
+    samplePlotBoundaries?: FeatureRow[];
 }
 
 const projectAreaStyleByType: Record<string, { color: string; fillOpacity: number }> = {
@@ -28,7 +32,14 @@ const projectAreaStyleByType: Record<string, { color: string; fillOpacity: numbe
     reference: { color: '#14b8a6', fillOpacity: 0.1 },
 };
 
-export default function Map({ plots = [], alerts = [], leakageZones = [], samplePlots = [], projectAreas = [] }: MapProps) {
+export default function Map({
+    plots = [],
+    alerts = [],
+    leakageZones = [],
+    samplePlots = [],
+    projectAreas = [],
+    samplePlotBoundaries = [],
+}: MapProps) {
     const ghanaCenter: [number, number] = [5.6, -0.2];
 
     return (
@@ -49,7 +60,7 @@ export default function Map({ plots = [], alerts = [], leakageZones = [], sample
                     />
                 </LayersControl.Overlay>
 
-                {(plots.length > 0 || projectAreas.length > 0 || samplePlots.length > 0 || alerts.length > 0 || leakageZones.length > 0) && (
+                {(plots.length > 0 || projectAreas.length > 0 || samplePlots.length > 0 || alerts.length > 0 || leakageZones.length > 0 || samplePlotBoundaries.length > 0) && (
                     <LayersControl.Overlay checked name="Project Specific Data">
                         <FeatureGroup>
                             {plots.map((plot) => (
@@ -60,9 +71,9 @@ export default function Map({ plots = [], alerts = [], leakageZones = [], sample
                                 >
                                     <Tooltip sticky>
                                         <div className="text-sm p-1">
-                                            <strong className="text-emerald-700">{plot.stratum_name}</strong><br />
-                                            <span className="text-slate-600">Area: {plot.area_ha} ha</span><br />
-                                            <span className="text-slate-600">Planted: {plot.planting_date}</span>
+                                            <strong className="text-emerald-700">{String(plot.stratum_name ?? '')}</strong><br />
+                                            <span className="text-slate-600">Area: {String(plot.area_ha ?? 'N/A')} ha</span><br />
+                                            <span className="text-slate-600">Planted: {String(plot.planting_date ?? 'N/A')}</span>
                                         </div>
                                     </Tooltip>
                                 </GeoJSON>
@@ -75,15 +86,15 @@ export default function Map({ plots = [], alerts = [], leakageZones = [], sample
                                     pathOptions={{
                                         color: alert.severity === 'High' || alert.severity === 'Critical' ? '#f43f5e' : '#f59e0b',
                                         weight: 2,
-                                        fillOpacity: 0.4
+                                        fillOpacity: 0.4,
                                     }}
                                 >
                                     <Tooltip sticky>
                                         <div className="text-sm p-1">
-                                            <strong className="text-slate-800">{alert.alert_type} Alert</strong><br />
-                                            <span className="text-slate-600">Severity: {alert.severity}</span><br />
-                                            <span className="text-slate-600">Status: {alert.status}</span><br />
-                                            <span className="text-slate-600">Area: {alert.detected_area_ha} ha</span>
+                                            <strong className="text-slate-800">{String(alert.alert_type ?? '')} Alert</strong><br />
+                                            <span className="text-slate-600">Severity: {String(alert.severity ?? '')}</span><br />
+                                            <span className="text-slate-600">Status: {String(alert.status ?? '')}</span><br />
+                                            <span className="text-slate-600">Area: {String(alert.detected_area_ha ?? 'N/A')} ha</span>
                                         </div>
                                     </Tooltip>
                                 </GeoJSON>
@@ -98,8 +109,8 @@ export default function Map({ plots = [], alerts = [], leakageZones = [], sample
                                     <Tooltip sticky>
                                         <div className="text-sm p-1">
                                             <strong className="text-violet-600">Buffer Zone</strong><br />
-                                            <span className="text-slate-600">Name: {zone.zone_name}</span><br />
-                                            <span className="text-slate-600">Area: {zone.area_ha} ha</span>
+                                            <span className="text-slate-600">Name: {String(zone.zone_name ?? '')}</span><br />
+                                            <span className="text-slate-600">Area: {String(zone.area_ha ?? 'N/A')} ha</span>
                                         </div>
                                     </Tooltip>
                                 </GeoJSON>
@@ -109,30 +120,46 @@ export default function Map({ plots = [], alerts = [], leakageZones = [], sample
                                 <GeoJSON
                                     key={plot.id}
                                     data={plot.geojson}
-                                    pointToLayer={(feature, latlng) => {
+                                    pointToLayer={(_feature, latlng) => {
                                         return L.circleMarker(latlng, {
                                             radius: 6,
-                                            fillColor: "#0ea5e9",
-                                            color: "#fff",
+                                            fillColor: '#0ea5e9',
+                                            color: '#fff',
                                             weight: 2,
                                             opacity: 1,
-                                            fillOpacity: 0.9
+                                            fillOpacity: 0.9,
                                         });
                                     }}
                                 >
                                     <Tooltip sticky>
                                         <div className="text-sm p-1">
                                             <strong className="text-sky-600">Sample Plot QA/QC</strong><br />
-                                            <span className="text-slate-600">Name: {plot.plot_name}</span><br />
-                                            <span className="text-slate-600">Stratum: {plot.stratum}</span><br />
-                                            <span className="text-slate-600 leading-tight">Status: <span className="font-medium text-slate-800">{plot.status}</span></span>
+                                            <span className="text-slate-600">Name: {String(plot.plot_name ?? '')}</span><br />
+                                            <span className="text-slate-600">Stratum: {String(plot.stratum ?? '')}</span><br />
+                                            <span className="text-slate-600 leading-tight">Status: <span className="font-medium text-slate-800">{String(plot.status ?? '')}</span></span>
+                                        </div>
+                                    </Tooltip>
+                                </GeoJSON>
+                            ))}
+
+                            {samplePlotBoundaries.map((boundary) => (
+                                <GeoJSON
+                                    key={boundary.id}
+                                    data={boundary.geojson}
+                                    pathOptions={{ color: '#f97316', weight: 2, dashArray: '4,4', fillOpacity: 0.05 }}
+                                >
+                                    <Tooltip sticky>
+                                        <div className="text-sm p-1">
+                                            <strong className="text-orange-600">PSP Boundary</strong><br />
+                                            <span className="text-slate-600">Name: {String(boundary.boundary_name ?? 'Unnamed')}</span><br />
+                                            <span className="text-slate-600">Area: {String(boundary.area_ha ?? 'N/A')} ha</span>
                                         </div>
                                     </Tooltip>
                                 </GeoJSON>
                             ))}
 
                             {projectAreas.map((area) => {
-                                const areaType = area.area_type || 'reference';
+                                const areaType = String(area.area_type ?? 'reference');
                                 const style = projectAreaStyleByType[areaType] || projectAreaStyleByType.reference;
 
                                 return (
@@ -143,9 +170,9 @@ export default function Map({ plots = [], alerts = [], leakageZones = [], sample
                                     >
                                         <Tooltip sticky>
                                             <div className="text-sm p-1">
-                                                <strong className="text-slate-800">{area.area_name}</strong><br />
+                                                <strong className="text-slate-800">{String(area.area_name ?? '')}</strong><br />
                                                 <span className="text-slate-600">Type: {areaType}</span><br />
-                                                <span className="text-slate-600">Area: {area.area_ha ?? 'N/A'} ha</span>
+                                                <span className="text-slate-600">Area: {String(area.area_ha ?? 'N/A')} ha</span>
                                             </div>
                                         </Tooltip>
                                     </GeoJSON>

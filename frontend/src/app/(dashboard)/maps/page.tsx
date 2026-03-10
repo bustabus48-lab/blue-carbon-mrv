@@ -14,6 +14,7 @@ export default async function MapsPage() {
     const { data: geoLeakage } = await supabase.from('geojson_leakage_zones').select('*');
     const { data: geoSamplePlots } = await supabase.from('geojson_sample_plots').select('*');
     const { data: geoProjectAreas } = await supabase.from('geojson_project_areas').select('*');
+    const { data: geoSamplePlotBoundaries } = await supabase.from('geojson_sample_plot_boundaries').select('*');
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
@@ -70,6 +71,12 @@ export default async function MapsPage() {
                                     {geoProjectAreas?.length || 0} features
                                 </span>
                             </div>
+                            <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg border border-slate-700/50">
+                                <span className="text-sm font-medium text-orange-400">PSP Boundaries</span>
+                                <span className="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded border border-slate-700">
+                                    {geoSamplePlotBoundaries?.length || 0} features
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -83,6 +90,7 @@ export default async function MapsPage() {
                             leakageZones={geoLeakage || []}
                             samplePlots={geoSamplePlots || []}
                             projectAreas={geoProjectAreas || []}
+                            samplePlotBoundaries={geoSamplePlotBoundaries || []}
                         />
                     </div>
                 </div>

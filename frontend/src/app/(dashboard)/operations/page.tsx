@@ -1,5 +1,6 @@
 import OperationsClient from "./OperationsClient";
-import { createClient } from "@/utils/supabase/server";
+import { headers } from "next/headers";
+import { API_BASE_URL } from "@/lib/api";
 
 export const metadata = {
     title: "Operations & Governance | Blue Carbon MRV",
@@ -8,16 +9,14 @@ export const metadata = {
 
 async function getGovernanceData() {
     try {
-        const supabase = await createClient();
+        const _headers = await headers();
+        const cookieHeader = _headers.get("cookie") || "";
 
-        const [
-            { data: projects },
-            { data: jobs },
-            { data: runs },
-        ] = await Promise.all([
-            supabase.from('projects').select('id, name, region').order('name'),
-            supabase.from('ingestion_jobs').select('*').order('created_at', { ascending: false }).limit(100),
-            supabase.from('classification_runs').select('*').order('started_at', { ascending: false }).limit(50),
+        // In a real app we would pass the cookie, but for MVP we just fetch directly
+        const [projectsRes, jobsRes, runsRes] = await Promise.all([
+            fetch(`${API_BASE_URL}/api/v1/projects`, { cache: "no-store", headers: { cookie: cookieHeader } }),
+            fetch(`${API_BASE_URL}/api/v1/governance/ingestion-jobs?limit=100`, { cache: "no-store", headers: { cookie: cookieHeader } }),
+            fetch(`${API_BASE_URL}/api/v1/governance/classification-runs?limit=50`, { cache: "no-store", headers: { cookie: cookieHeader } })
         ]);
 
         return {

@@ -8,11 +8,12 @@ const DashboardMap = dynamic(() => import("@/components/Map"), {
 });
 
 interface MapWrapperProps {
-    plots?: any[];
-    alerts?: any[];
-    leakageZones?: any[];
-    samplePlots?: any[];
-    projectAreas?: any[];
+    plots?: unknown[];
+    alerts?: unknown[];
+    leakageZones?: unknown[];
+    samplePlots?: unknown[];
+    projectAreas?: unknown[];
+    samplePlotBoundaries?: unknown[];
 }
 
 export default function MapWrapper(props: MapWrapperProps) {
