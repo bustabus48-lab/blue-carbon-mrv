@@ -21,83 +21,141 @@
 ## 3. ENVIRONMENT BOOTSTRAP — READ THIS BEFORE WRITING ANY CODE
 
 ### Step 1 — Pull all app secrets from Vercel (single source of truth)
-All project secrets (Supabase URLs, API keys, Mapbox token, etc.) live in Vercel Environment Variables.
-Run this from inside the project directory to get a local `.env.local`:
+All project secrets live in Vercel Environment Variables. Run from inside the project directory:
 ```bash
 vercel env pull .env.local
 ```
-This requires the Vercel CLI to be authenticated (see Step 2). Never hardcode keys. Never ask the user for keys.
+Requires Vercel CLI auth (see Section 4). Never hardcode keys. Never ask the user for keys.
 
-### Step 2 — Authenticate the CLI tools
-
-#### Vercel CLI
-- **Local (macOS):** Auth token is stored at `~/Library/Application Support/com.vercel.cli/auth.json`
-- **Cloud / CI agents:** Set the `VERCEL_TOKEN` environment variable. The team ID is `team_lo3ulbRrV03KJe87XF043ftU`.
-- **Check:** `vercel whoami`
-- **If not authenticated:** `vercel login` (browser flow) or set `VERCEL_TOKEN`
-
-#### Supabase CLI
-- **Usage:** Always use `npx supabase` (not a global install) — current version: 2.78.1
-- **Cloud / CI agents:** Set the `SUPABASE_ACCESS_TOKEN` environment variable (get from Supabase dashboard → Account → Access Tokens)
-- **Check:** `npx supabase projects list`
-- **If not authenticated:** `npx supabase login` or set `SUPABASE_ACCESS_TOKEN`
-
-#### GitHub CLI
-- **Local (macOS):** Token stored in macOS keychain under `gh:github.com` (user: `bustabus48-lab`)
-- **Cloud / CI agents:** Set the `GH_TOKEN` environment variable
-- **Check:** `gh auth status`
-- **If not authenticated:** `gh auth login` or set `GH_TOKEN`
-- **Note:** `gh` may not be globally installed — install with `brew install gh` if missing
-
-### Step 3 — Verify your environment
-After pulling `.env.local`, confirm these keys are present before writing any data code:
+### Step 2 — Verify keys are present
+After pulling `.env.local`, confirm these are set before writing any data code:
 ```
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
 SUPABASE_SERVICE_ROLE_KEY
+NEXT_PUBLIC_MAPBOX_TOKEN
+```
+For GAB OS only, also check:
+```
 ERP_SUPABASE_URL
 ERP_SUPABASE_SERVICE_ROLE_KEY
-NEXT_PUBLIC_MAPBOX_TOKEN
 ```
 
 ---
 
-## 4. TWO-DATABASE ARCHITECTURE
-This project uses TWO Supabase projects — never confuse them:
+## 4. CLI AUTHENTICATION — EXACT LOCATIONS
+
+### Vercel CLI
+- **Binary:** globally installed at `~/.nvm/versions/node/v24.13.0/bin/vercel` (v50.28.0)
+- **Local auth:** token stored at `~/Library/Application Support/com.vercel.cli/auth.json`
+- **Cloud/CI auth:** set env var `VERCEL_TOKEN`
+- **Team ID:** `team_lo3ulbRrV03KJe87XF043ftU`
+- **Account:** `bustabus48-7182` (bustabus48-lab)
+- **Check:** `vercel whoami`
+- **Env sync:** `vercel env pull .env.local` (run inside project directory)
+
+### Supabase CLI
+- **Binary:** NOT globally installed — always use `npx supabase` (v2.78.1)
+- **Local auth:** token stored in macOS Keychain as service `"Supabase CLI"` (base64-encoded `go-keyring-base64:...`)
+  - Retrieve: `security find-generic-password -s "Supabase CLI" -w | sed 's/go-keyring-base64://' | base64 -d`
+- **Cloud/CI auth:** set env var `SUPABASE_ACCESS_TOKEN`
+- **Check:** `npx supabase projects list`
+- **DB push:** `npx supabase db push` — works with `SUPABASE_ACCESS_TOKEN` alone, NO database password needed
+- **Link project:** `npx supabase link --project-ref <REF_ID>`
+
+### GitHub CLI
+- **Binary:** installed at `~/bin/gh` (v2.88.0) — `~/bin` must be in PATH
+- **PATH fix:** `export PATH="$HOME/bin:$PATH"` (already added to `~/.zshrc`)
+- **Local auth:** token stored in macOS Keychain as `gh:github.com` (base64-encoded `go-keyring-base64:...`)
+  - Retrieve: `security find-internet-password -s github.com -w | sed 's/go-keyring-base64://' | base64 -d`
+- **Cloud/CI auth:** set env var `GH_TOKEN`
+- **Account:** `bustabus48-lab`
+- **Org:** `GAB-Climate-Smart`
+- **Check:** `gh auth status`
+
+---
+
+## 5. PROJECT REGISTRY — ALL SUPABASE & VERCEL IDs
+
+| Project | Supabase Ref | Vercel Project ID | GitHub Repo |
+|---|---|---|---|
+| GAB OS | `wodaprxocrpuyspbdcoj` | (linked via `gab-os/.vercel`) | GAB-Climate-Smart/gab-os |
+| Farm ERP | `hyopniuqpiostogtacly` | — | GAB-Climate-Smart/gab-farms-erp |
+| Blue Carbon MRV | `eavqytqxeaswfbytguxs` | `prj_D1dy10r3f6wPaZCBmCaG6noAuR0Z` | GAB-Climate-Smart/blue-carbon-mrv |
+| GAB Ramsar Map | `wmgbqjmsizixhjosbflg` | (linked via `gab-ramsar-map/.vercel`) | GAB-Climate-Smart/gab-ramsar-map |
+| GAB Website | `xnwfyjhcdgjblkuxncpg` | — | — |
+
+**Supabase Org ID:** `iiyyvaspzrcqrqpkxarm`
+**Vercel Team ID:** `team_lo3ulbRrV03KJe87XF043ftU`
+
+---
+
+## 6. TWO-DATABASE ARCHITECTURE (GAB OS ONLY)
+GAB OS reads farm data FROM the ERP — never write farm data to GAB OS:
 
 | | GAB OS | Farm ERP |
 |---|---|---|
-| **Purpose** | Company OS: finance, alerts, projects, consultancy | Source of truth for all farm data |
-| **Client var** | `NEXT_PUBLIC_SUPABASE_URL` | `ERP_SUPABASE_URL` |
-| **Usage** | `createClient()` from `@/lib/supabase` | `erpAdminClient()` from `@/lib/erpClient` |
+| **Purpose** | Company OS: finance, alerts, projects, consultancy | Source of truth for ALL farm data |
+| **Supabase Ref** | `wodaprxocrpuyspbdcoj` | `hyopniuqpiostogtacly` |
+| **Client** | `createClient()` from `@/lib/supabase` | `erpAdminClient()` from `@/lib/erpClient` |
+| **Env var** | `NEXT_PUBLIC_SUPABASE_URL` | `ERP_SUPABASE_URL` |
 | **Owns** | transactions, alerts, buyers, projects | blocks, produce_lots, tasks, inputs, block_metrics |
 
 ---
 
-## 5. CLI WORKFLOW
-Use these tools via the terminal for all infrastructure work:
-- **Database migrations:** `npx supabase db push` or run SQL in Supabase Dashboard SQL Editor
-- **Type generation:** `npx supabase gen types typescript --project-id <id> > types/database.ts`
-- **Local dev:** `vercel dev` (pulls env vars automatically)
-- **Env sync:** `vercel env pull .env.local`
-- **Deploy:** `git push origin main` (Vercel auto-deploys on push to main)
+## 7. CI/CD — GITHUB ACTIONS PATTERN (BLUE CARBON MRV REFERENCE)
+This is the correct, working pattern for all projects using GitHub Actions:
+```yaml
+- name: Deploy database migrations
+  run: supabase db push          # SUPABASE_ACCESS_TOKEN alone is sufficient — no DB password
+  env:
+    SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+- name: Deploy to Vercel
+  working-directory: ${{ github.workspace }}
+  run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
+  env:
+    VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+    VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+```
+**Do NOT use `amondnet/vercel-action`** — it has a broken path resolution bug.
+**Do NOT set `SUPABASE_DB_PASSWORD`** — the access token handles auth.
 
 ---
 
-## 6. SECRETS POLICY (STRICT)
-- **NEVER** hardcode API keys, tokens, or passwords anywhere in code
-- **NEVER** commit `.env.local` to git (it is in `.gitignore`)
-- **NEVER** ask the user for keys — always pull them from Vercel or read from `process.env`
-- All secrets flow: Vercel Dashboard → `vercel env pull` → `.env.local` → `process.env`
+## 8. CLI WORKFLOW
+```bash
+# Database migrations
+npx supabase db push                          # push migrations to linked project
+npx supabase gen types typescript --project-id <REF> > types/database.ts
+
+# Local dev
+vercel dev                                    # pulls env vars automatically
+
+# Env sync
+vercel env pull .env.local                   # always run this first in any project
+
+# Deploy
+git push origin main                          # Vercel auto-deploys on push to main
+```
 
 ---
 
-## 7. END OF SHIFT PROTOCOL (CI/CD)
-You are not finished until the code is in the cloud. After any approved feature:
+## 9. SECRETS POLICY (STRICT)
+- **NEVER** hardcode API keys, tokens, or passwords in code
+- **NEVER** commit `.env.local` to git (already in `.gitignore`)
+- **NEVER** ask the user for keys — pull from Vercel or read `process.env`
+- All app secrets flow: Vercel Dashboard → `vercel env pull` → `.env.local` → `process.env`
+- All CI secrets flow: GitHub repo Settings → Secrets → workflow `${{ secrets.NAME }}`
+
+---
+
+## 10. END OF SHIFT PROTOCOL (CI/CD)
+You are not finished until the code is in the cloud:
 ```bash
 git status
 git add .
 git commit -m "feat/fix: [brief description]"
 git push origin main
 ```
-Vercel auto-deploys on push to `main`. Confirm the deployment succeeded at vercel.com/dashboard.
+Vercel auto-deploys on push to `main`. Confirm at vercel.com/dashboard.
