@@ -77,16 +77,20 @@ ERP_SUPABASE_SERVICE_ROLE_KEY
 
 ## 5. PROJECT REGISTRY — ALL SUPABASE & VERCEL IDs
 
-| Project | Supabase Ref | Vercel Project ID | GitHub Repo |
-|---|---|---|---|
-| GAB OS | `wodaprxocrpuyspbdcoj` | (linked via `gab-os/.vercel`) | GAB-Climate-Smart/gab-os |
-| Farm ERP | `hyopniuqpiostogtacly` | — | GAB-Climate-Smart/gab-farms-erp |
-| Blue Carbon MRV | `eavqytqxeaswfbytguxs` | `prj_D1dy10r3f6wPaZCBmCaG6noAuR0Z` | GAB-Climate-Smart/blue-carbon-mrv |
-| GAB Ramsar Map | `wmgbqjmsizixhjosbflg` | (linked via `gab-ramsar-map/.vercel`) | GAB-Climate-Smart/gab-ramsar-map |
-| GAB Website | `xnwfyjhcdgjblkuxncpg` | — | — |
+| Project | Supabase Ref | Vercel Project ID | Vercel URL | GitHub Repo |
+|---|---|---|---|---|
+| GAB OS | `wodaprxocrpuyspbdcoj` | `prj_7duoMp2yRrEpCGoOjnpwrZeAcMY3` | gab-os.vercel.app | GAB-Climate-Smart/gab-os |
+| Farm ERP (web) | `hyopniuqpiostogtacly` | `prj_vH7wYD6qUh5Y3rZAfd8rERPka6e3` | gab-farms-erp-web.vercel.app | GAB-Climate-Smart/gab-farms-erp |
+| Blue Carbon MRV | `eavqytqxeaswfbytguxs` | `prj_D1dy10r3f6wPaZCBmCaG6noAuR0Z` | blue-carbon-mrv-green.vercel.app | GAB-Climate-Smart/blue-carbon-mrv |
+| GAB Ramsar Map | `wmgbqjmsizixhjosbflg` | `prj_vEhKNQ1shC13FUd5exdputc96VBZ` | gab-ramsar-map.vercel.app | GAB-Climate-Smart/gab-ramsar-map |
+| GAB Website | `xnwfyjhcdgjblkuxncpg` | — | — | — |
 
 **Supabase Org ID:** `iiyyvaspzrcqrqpkxarm`
 **Vercel Team ID:** `team_lo3ulbRrV03KJe87XF043ftU`
+
+**Farm ERP local path:** `~/Desktop/Prism_Project_Biodiversity_Plan 2/gab-farms-erp` (monorepo — Next.js app lives in `apps/web/`)
+**Farm ERP env vars:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN`
+**Farm ERP Vercel link:** run `vercel link --project gab-farms-erp-web` from the repo root, then `vercel env pull .env.local`
 
 ---
 
