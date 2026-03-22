@@ -60,8 +60,34 @@ export default function Map({
                     />
                 </LayersControl.Overlay>
 
-                {(plots.length > 0 || projectAreas.length > 0 || samplePlots.length > 0 || alerts.length > 0 || leakageZones.length > 0 || samplePlotBoundaries.length > 0) && (
-                    <LayersControl.Overlay checked name="Project Specific Data">
+                {projectAreas.length > 0 && (
+                    <LayersControl.Overlay checked name="Project Boundaries">
+                        <FeatureGroup>
+                            {projectAreas.map((area) => {
+                                const areaType = String(area.area_type ?? 'reference');
+                                const style = projectAreaStyleByType[areaType] || projectAreaStyleByType.reference;
+                                return (
+                                    <GeoJSON
+                                        key={area.id}
+                                        data={area.geojson}
+                                        pathOptions={{ color: style.color, weight: 2, fillOpacity: style.fillOpacity }}
+                                    >
+                                        <Tooltip sticky>
+                                            <div className="text-sm p-1">
+                                                <strong className="text-slate-800">{String(area.area_name ?? '')}</strong><br />
+                                                <span className="text-slate-600">Type: {areaType}</span><br />
+                                                <span className="text-slate-600">Area: {String(area.area_ha ?? 'N/A')} ha</span>
+                                            </div>
+                                        </Tooltip>
+                                    </GeoJSON>
+                                );
+                            })}
+                        </FeatureGroup>
+                    </LayersControl.Overlay>
+                )}
+
+                {plots.length > 0 && (
+                    <LayersControl.Overlay checked name="Carbon Inventory Plots">
                         <FeatureGroup>
                             {plots.map((plot) => (
                                 <GeoJSON
@@ -78,28 +104,13 @@ export default function Map({
                                     </Tooltip>
                                 </GeoJSON>
                             ))}
+                        </FeatureGroup>
+                    </LayersControl.Overlay>
+                )}
 
-                            {alerts.map((alert) => (
-                                <GeoJSON
-                                    key={alert.id}
-                                    data={alert.geojson}
-                                    pathOptions={{
-                                        color: alert.severity === 'High' || alert.severity === 'Critical' ? '#f43f5e' : '#f59e0b',
-                                        weight: 2,
-                                        fillOpacity: 0.4,
-                                    }}
-                                >
-                                    <Tooltip sticky>
-                                        <div className="text-sm p-1">
-                                            <strong className="text-slate-800">{String(alert.alert_type ?? '')} Alert</strong><br />
-                                            <span className="text-slate-600">Severity: {String(alert.severity ?? '')}</span><br />
-                                            <span className="text-slate-600">Status: {String(alert.status ?? '')}</span><br />
-                                            <span className="text-slate-600">Area: {String(alert.detected_area_ha ?? 'N/A')} ha</span>
-                                        </div>
-                                    </Tooltip>
-                                </GeoJSON>
-                            ))}
-
+                {leakageZones.length > 0 && (
+                    <LayersControl.Overlay checked name="Buffer & Leakage Zones">
+                        <FeatureGroup>
                             {leakageZones.map((zone) => (
                                 <GeoJSON
                                     key={zone.id}
@@ -115,7 +126,13 @@ export default function Map({
                                     </Tooltip>
                                 </GeoJSON>
                             ))}
+                        </FeatureGroup>
+                    </LayersControl.Overlay>
+                )}
 
+                {samplePlots.length > 0 && (
+                    <LayersControl.Overlay name="QA/QC Sample Plots">
+                        <FeatureGroup>
                             {samplePlots.map((plot) => (
                                 <GeoJSON
                                     key={plot.id}
@@ -141,7 +158,13 @@ export default function Map({
                                     </Tooltip>
                                 </GeoJSON>
                             ))}
+                        </FeatureGroup>
+                    </LayersControl.Overlay>
+                )}
 
+                {samplePlotBoundaries.length > 0 && (
+                    <LayersControl.Overlay name="PSP Boundaries">
+                        <FeatureGroup>
                             {samplePlotBoundaries.map((boundary) => (
                                 <GeoJSON
                                     key={boundary.id}
@@ -157,27 +180,33 @@ export default function Map({
                                     </Tooltip>
                                 </GeoJSON>
                             ))}
+                        </FeatureGroup>
+                    </LayersControl.Overlay>
+                )}
 
-                            {projectAreas.map((area) => {
-                                const areaType = String(area.area_type ?? 'reference');
-                                const style = projectAreaStyleByType[areaType] || projectAreaStyleByType.reference;
-
-                                return (
-                                    <GeoJSON
-                                        key={area.id}
-                                        data={area.geojson}
-                                        pathOptions={{ color: style.color, weight: 2, fillOpacity: style.fillOpacity }}
-                                    >
-                                        <Tooltip sticky>
-                                            <div className="text-sm p-1">
-                                                <strong className="text-slate-800">{String(area.area_name ?? '')}</strong><br />
-                                                <span className="text-slate-600">Type: {areaType}</span><br />
-                                                <span className="text-slate-600">Area: {String(area.area_ha ?? 'N/A')} ha</span>
-                                            </div>
-                                        </Tooltip>
-                                    </GeoJSON>
-                                );
-                            })}
+                {alerts.length > 0 && (
+                    <LayersControl.Overlay checked name="Disturbance Alerts">
+                        <FeatureGroup>
+                            {alerts.map((alert) => (
+                                <GeoJSON
+                                    key={alert.id}
+                                    data={alert.geojson}
+                                    pathOptions={{
+                                        color: alert.severity === 'High' || alert.severity === 'Critical' ? '#f43f5e' : '#f59e0b',
+                                        weight: 2,
+                                        fillOpacity: 0.4,
+                                    }}
+                                >
+                                    <Tooltip sticky>
+                                        <div className="text-sm p-1">
+                                            <strong className="text-slate-800">{String(alert.alert_type ?? '')} Alert</strong><br />
+                                            <span className="text-slate-600">Severity: {String(alert.severity ?? '')}</span><br />
+                                            <span className="text-slate-600">Status: {String(alert.status ?? '')}</span><br />
+                                            <span className="text-slate-600">Area: {String(alert.detected_area_ha ?? 'N/A')} ha</span>
+                                        </div>
+                                    </Tooltip>
+                                </GeoJSON>
+                            ))}
                         </FeatureGroup>
                     </LayersControl.Overlay>
                 )}
