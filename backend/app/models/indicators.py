@@ -22,7 +22,7 @@ class SocioEconomicObservation(Base):
     source_reference = Column(String, nullable=True)
     verified_by = Column(String, nullable=True)
     evidence_link_id = Column(UUID(as_uuid=True), nullable=True)
-    metadata = Column(JSONB, nullable=False, server_default=text("'{}'::jsonb"))
+    metadata_json = Column("metadata", JSONB, nullable=False, server_default=text("'{}'::jsonb"))
     created_at = Column(DateTime(timezone=True), server_default=text("timezone('utc'::text, now())"), nullable=False)
 
     project = relationship("Project", back_populates="socio_economic_observations")
@@ -42,7 +42,7 @@ class EnvironmentalPressureObservation(Base):
     verified_by = Column(String, nullable=True)
     evidence_link_id = Column(UUID(as_uuid=True), nullable=True)
     notes = Column(String, nullable=True)
-    metadata = Column(JSONB, nullable=False, server_default=text("'{}'::jsonb"))
+    metadata_json = Column("metadata", JSONB, nullable=False, server_default=text("'{}'::jsonb"))
     created_at = Column(DateTime(timezone=True), server_default=text("timezone('utc'::text, now())"), nullable=False)
 
     project = relationship("Project", back_populates="environmental_pressure_observations")
